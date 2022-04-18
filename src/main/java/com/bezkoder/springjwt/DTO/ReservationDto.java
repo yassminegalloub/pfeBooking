@@ -17,6 +17,12 @@ public class ReservationDto {
     private Activity activity;
      private User user ;
 
+
+
+
+
+     //password=getOne()+
+
     public ReservationDto() {
     }
 

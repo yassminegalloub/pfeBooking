@@ -42,6 +42,7 @@ public class ReservationController {
                 reservationDto.getActivity(),
                 reservationDto.getUser() );
         reservationService.save(reservation);
+
         return new ResponseEntity(reservation,HttpStatus.OK);
     }
 
