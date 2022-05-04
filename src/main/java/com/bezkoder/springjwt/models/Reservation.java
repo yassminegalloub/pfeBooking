@@ -13,7 +13,9 @@ public class Reservation {
 
     private String room_number;
 
-    private String person_number;
+    private Long adult_number;
+
+    private Long enfant_number ;
 
     private Date arrival;
 
@@ -23,7 +25,6 @@ public class Reservation {
     private Activity activity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
     private User user;
 
 
@@ -31,9 +32,10 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String room_number, String person_number, Date arrival, Date departure, Activity activity, User user) {
+    public Reservation(String room_number, long adult_number, long enfant_number, Date arrival, Date departure, Activity activity, User user) {
         this.room_number = room_number;
-        this.person_number = person_number;
+        this.adult_number= adult_number;
+        this.enfant_number= enfant_number;
         this.arrival = arrival;
         this.departure = departure;
         this.activity= activity;
@@ -56,12 +58,20 @@ public class Reservation {
         this.room_number = room_number;
     }
 
-    public String getPerson_number() {
-        return person_number;
+    public Long getAdult_number() {
+        return adult_number;
     }
 
-    public void setPerson_number(String person_number) {
-        this.person_number = person_number;
+    public void setAdult_number(Long adulte_number) {
+        this.adult_number = adulte_number;
+    }
+
+    public Long getEnfant_number() {
+        return enfant_number;
+    }
+
+    public void setEnfant_number(Long enfant_number) {
+        this.enfant_number = enfant_number;
     }
 
     public Date getArrival() {

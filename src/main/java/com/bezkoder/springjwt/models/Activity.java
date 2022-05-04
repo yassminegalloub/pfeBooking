@@ -26,8 +26,9 @@ public class Activity {
     @Size(max = 50)
     private String promotion;
 
-    @Column( length = 64)
-    private String picture;
+    private String file;
+
+
 
 
     private Boolean available;
@@ -35,16 +36,19 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity( String name, Date activity_schedule, String promotion, String picture, Boolean available) {
+    public Activity( String name, Date activity_schedule, String promotion, Boolean available, String file) {
 
         this.name = name;
         this.activity_schedule = activity_schedule;
         this.promotion = promotion;
-        this.picture = picture;
+        this.file = file;
         this.available = available;
     }
 
+    public Activity(String file) {
+        this.file = file;
 
+    }
 
     public Long getId() {
         return id;
@@ -78,12 +82,13 @@ public class Activity {
         this.promotion = promotion;
     }
 
-    public String getPicture() {
-        return picture;
+
+    public String getFile() {
+        return file;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setFile(String file) {
+        this.file = file;
     }
 
     public Boolean getAvailable() {

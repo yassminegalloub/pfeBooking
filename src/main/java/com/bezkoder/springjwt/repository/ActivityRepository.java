@@ -11,5 +11,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     Optional<Activity> findById(Long id);
 
-    Optional<Activity> findByName(String name);
+
 }

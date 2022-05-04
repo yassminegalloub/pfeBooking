@@ -36,7 +36,8 @@ public class ReservationController {
                //     .body(new MessageResponse("Error: room is already taken!"));
        // }
         Reservation reservation= new Reservation(reservationDto.getRoom_number(),
-                reservationDto.getPerson_number(),
+                reservationDto.getAdult_number(),
+                reservationDto.getEnfant_number(),
                 reservationDto.getArrival(),
                 reservationDto.getDeparture(),
                 reservationDto.getActivity(),
