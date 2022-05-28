@@ -23,8 +23,9 @@ public class ReservationService {
         return reservationRepo.findById(id);
     }
 
-    public void save(Reservation reservation) {
-        reservationRepo.save((reservation));
+    public Reservation save(Reservation reservation, Long id_user, Long  id_activity, Long id_room) {
+       return reservationRepo.save((reservation));
+
     }
 
     public void delete(long id) {

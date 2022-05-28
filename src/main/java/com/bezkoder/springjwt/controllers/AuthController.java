@@ -1,12 +1,8 @@
 package com.bezkoder.springjwt.controllers;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import com.bezkoder.springjwt.DTO.ActivityDto;
-import com.bezkoder.springjwt.models.Activity;
 import com.bezkoder.springjwt.repository.ActivityRepository;
 import com.bezkoder.springjwt.security.services.ActivityService;
 import com.bezkoder.springjwt.security.services.UserService;
@@ -65,6 +61,7 @@ public class AuthController {
 				.collect(Collectors.toList());
 		return ResponseEntity.ok(new JwtResponse(jwt,
 				userDetails.getId(),
+				userDetails.getName(),
 				userDetails.getUsername(),
 				userDetails.getEmail(),
 				roles));
@@ -78,7 +75,7 @@ public class AuthController {
 		}
 
 		// Create new user's account
-		User user = new User(signUpRequest.getUsername(),
+		User user = new User( signUpRequest.getName(),signUpRequest.getUsername(),
 				signUpRequest.getEmail(),
 				encoder.encode(signUpRequest.getPassword()));
 		Set<String> strRoles = signUpRequest.getRole();
@@ -116,8 +113,8 @@ public class AuthController {
 		userRepository.save(user);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
-	@PostMapping("/newUser")
-	public ResponseEntity<?> newUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	@PostMapping("/newReception")
+	public ResponseEntity<?> newReception(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -129,9 +126,8 @@ public class AuthController {
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
-
 		// Create new user's account
-		User user = new User(signUpRequest.getUsername(),
+		User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
 				signUpRequest.getEmail(),
 				encoder.encode(signUpRequest.getPassword()));
 
@@ -164,7 +160,57 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new MessageResponse("Reception registered successfully!"));
+	}
+
+	@PostMapping("/newClient")
+	public ResponseEntity<?> newClient(@Valid @RequestBody SignupRequest signUpRequest) {
+		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Username is already taken!"));
+		}
+
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already in use!"));
+		}
+		// Create new user's account
+		User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
+				signUpRequest.getEmail(),
+				encoder.encode(signUpRequest.getPassword()));
+
+		Set<String> strRoles = signUpRequest.getRole();
+		Set<Role> roles = new HashSet<>();
+
+
+		if (strRoles == null) {
+			Role userRole = roleRepository.findByName(ERole.ROLE_CLIENT)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+			roles.add(userRole);
+		} else {
+			strRoles.forEach(role -> {
+				switch (role) {
+
+					case "agent":
+						Role agentRole = roleRepository.findByName(ERole.ROLE_AGENT)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+						roles.add(agentRole);
+						break;
+					case "reception":
+						Role receptionRole = roleRepository.findByName(ERole.ROLE_RECEPTION)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+						roles.add(receptionRole);
+						break;
+
+				}
+			});
+		}
+
+		user.setRoles(roles);
+		userRepository.save(user);
+		return ResponseEntity.ok(new MessageResponse("Client registered successfully!"));
 	}
 
 	@GetMapping("/allUsers")
@@ -173,6 +219,17 @@ public class AuthController {
 		model.addAttribute("users", users);
 		signUpRequest.getRole();
 		return users ;
+	}
+	@GetMapping("/allReception")
+	public ResponseEntity<?> viewReception(Model model, SignupRequest signUpRequest ){
+		//if(User.getRoles().equals(roleRepository.findByName(ERole.ROLE_RECEPTION)) ){
+			List<User> users = service.listAll();
+			model.addAttribute("users", users);
+			signUpRequest.getRole();
+
+		//}
+		return new ResponseEntity( HttpStatus.OK);
+
 	}
     @GetMapping("/allRoles")
     public List<Role> viewRoles(Model model, SignupRequest signUpRequest ){
@@ -198,10 +255,22 @@ public class AuthController {
 	@PostMapping("/editUser/{id}")
 	public ResponseEntity<?> editUser(@PathVariable("id") Long id, @RequestBody SignupRequest signUpRequest){
 		User user = service.getOne(id).get();
+		user.setName(signUpRequest.getName());
 		user.setUsername(signUpRequest.getUsername());
 		user.setEmail(signUpRequest.getEmail());
 		user.setPassword(encoder.encode(signUpRequest.getPassword()));
 		service.save(user);
+		return new ResponseEntity(user, HttpStatus.OK);
+	}
+	@PutMapping("/editPasswordUser/{id}")
+	public ResponseEntity<?> editPasswordUser(@PathVariable("id") Long id, @RequestBody SignupRequest signUpRequest){
+		Optional<User> user = service.getOne(id);
+     if (user.isPresent()){
+		 User user1=user.get();
+		 user1.setPassword(signUpRequest.getPassword());
+		 service.updatePassword(user1);
+	 }
+
 		return new ResponseEntity(user, HttpStatus.OK);
 	}
 

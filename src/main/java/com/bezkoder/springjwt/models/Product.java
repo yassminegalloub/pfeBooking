@@ -1,26 +1,39 @@
 package com.bezkoder.springjwt.models;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+
+import javax.persistence.*;
+
 
 @Entity
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String code;
     private String name;
+    private String price;
 
-
+    @ManyToOne
+    // @JoinColumn(name = "catalog_id_catalog")
+    private Catalog catalog;
 
     public Product() {
     }
 
-    public Product(String code, String name) {
+    public Product(int id, String code, String name, String price) {
+        this.id = id;
         this.code = code;
         this.name = name;
+        this.price = price;
     }
+
+    public Product(String code, String name, String price) {
+        this.code = code;
+        this.name = name;
+        this.price = price;
+    }
+
 
     public int getId() {
         return id;
@@ -45,4 +58,21 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public Catalog getCatalog() {
+        return catalog;
+    }
+
+    public void setCatalog(Catalog catalog) {
+        this.catalog = catalog;
+    }
 }
+

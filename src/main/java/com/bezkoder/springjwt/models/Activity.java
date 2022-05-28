@@ -22,16 +22,15 @@ public class Activity {
 
     private Date activity_schedule;
 
-
     @Size(max = 50)
     private String promotion;
 
     private String file;
 
-
-
-
     private Boolean available;
+
+    @Transient
+    private String fileURL;
 
     public Activity() {
     }
@@ -97,6 +96,14 @@ public class Activity {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public String getFileURL() {
+        return fileURL;
+    }
+
+    public void setFileURL(String fileURL) {
+        this.fileURL = fileURL;
     }
 }
 

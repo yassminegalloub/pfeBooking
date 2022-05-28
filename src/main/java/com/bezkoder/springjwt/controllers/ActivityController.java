@@ -3,10 +3,14 @@ package com.bezkoder.springjwt.controllers;
 
 import com.bezkoder.springjwt.DTO.ActivityDto;
 import com.bezkoder.springjwt.DTO.Message;
+import com.bezkoder.springjwt.DTO.RoomDTOs;
 import com.bezkoder.springjwt.models.Activity;
+import com.bezkoder.springjwt.models.Room;
+import com.bezkoder.springjwt.models.User;
 import com.bezkoder.springjwt.security.services.ActivityService;
 import com.bezkoder.springjwt.security.services.FileImplService;
 import com.bezkoder.springjwt.security.services.FileService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -32,11 +37,14 @@ public class ActivityController {
     FileImplService fileImplService ;
 
 
-    @PostMapping(value ="/newActivity/{name}",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-        public ResponseEntity<?> newActivity(@RequestPart ActivityDto activityDto, @RequestPart MultipartFile file, @PathVariable("name") String name)  {
+    @PostMapping(value ="/newActivity",consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+        public Activity newActivity(@RequestParam("activities") String activities, @RequestParam("file") MultipartFile file ) throws IOException {
         String message = "";
-        try {
+
+            ActivityDto activityDto = new ObjectMapper().readValue(activities, ActivityDto.class);
+
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
 
             Activity activity = new Activity(
                     activityDto.getName(),
@@ -44,17 +52,48 @@ public class ActivityController {
                     activityDto.getPromotion(),
                     activityDto.getAvailable(),
                     fileName);
-              activityService.save(activity);
-            fileService.save(file, name);
+        fileImplService.save(file);
 
-        } catch (Exception e) {
-            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-        }
-         message = "Activity: "+activityDto.getName()+ " and file registered successfully: " + file.getOriginalFilename();
-        return ResponseEntity.status(HttpStatus.OK).body(new Message(message));
+        return activityService.save(activity);
     }
+    @DeleteMapping("/DeleteActivity/{id}")
+    public void deleteActivity(@PathVariable("id") Long id ){
+        Activity activity = activityService.getOne(id).get();
 
-    
+        fileImplService.delete(activity.getFile());
+        activityService.delete(id);
+
+    }
+    @PostMapping(value ="/editActivity/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> editRoom(@PathVariable("id") Long id, @RequestParam("activities") String activities, @RequestParam("file") MultipartFile file) throws IOException {
+        ActivityDto activityDto = new ObjectMapper().readValue(activities, ActivityDto.class);
+
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        Activity activity = activityService.getOne(id).get();
+        //delete file
+        fileImplService.delete(activity.getFile());
+
+        //update donnée
+        activity.setName(activityDto.getName());
+        activity.setActivity_schedule(activityDto.getActivity_schedule());
+        activity.setAvailable(activityDto.getAvailable());
+        activity.setPromotion(activityDto.getPromotion());
+        activity.setFile(fileName);
+
+        fileImplService.save(file);
+        activityService.save(activity);
+
+        return new ResponseEntity(activity, HttpStatus.OK);
+    }
+    @PostMapping("/editAvailable/{id}")
+    public Activity editAvailable(@PathVariable("id") Long id, @RequestBody ActivityDto activityDto){
+        Optional<Activity> activity = activityService.getOne(id);
+        Activity activity1=activity.get();
+
+        activity1.setAvailable(activityDto.getAvailable());
+
+        return activityService.updateAvailable(activity1);
+    }
     @GetMapping("/allActivity")
     public ResponseEntity<List<Activity>> list() throws IOException {
         List<Activity> list =activityService.list();
@@ -62,20 +101,11 @@ public class ActivityController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-
-
-    @RequestMapping(value = "/load/{filename}" , method = RequestMethod.GET)
-    public ResponseEntity<Resource> loadFile(@PathVariable("filename") String filename) throws IOException {
-        return fileService.load(filename);
-    }
-
-    @GetMapping("/files/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable long id) {
-        Activity activity  = activityService.getFile(id);
-
-        return (ResponseEntity<byte[]>) ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + activity.getFile() + "\"");
-
+    @GetMapping("/files/{filename:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        Resource file = fileService.load(filename);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
 

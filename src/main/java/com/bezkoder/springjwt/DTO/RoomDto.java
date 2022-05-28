@@ -1,24 +1,24 @@
 package com.bezkoder.springjwt.DTO;
 
 public class RoomDto {
-    private String name_room;
+    private String name;
     private String file;
     private String details;
     private String price;
 
-    public RoomDto(String details, String name_room, String price, String file) {
-        this.name_room = name_room;
+    public RoomDto(String details, String name, String price, String file) {
+        this.name= name;
         this.file = file;
         this.details = details;
         this.price = price;
     }
 
     public String getName_room() {
-        return name_room;
+        return name;
     }
 
     public void setName_room(String name_room) {
-        this.name_room = name_room;
+        this.name = name_room;
     }
 
     public String getFile() {

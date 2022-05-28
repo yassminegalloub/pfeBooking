@@ -2,9 +2,6 @@ package com.bezkoder.springjwt.security.services;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,12 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
-
 @Service
-public class FileImplService implements FileService{
+public class RoomFileImplService implements RoomFileService{
 
-    private final Path root = Paths.get("uploads/");
-
+    private final Path root = Paths.get("RoomsFile/");
     @Override
     public void init() {
         try {

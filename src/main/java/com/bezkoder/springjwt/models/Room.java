@@ -1,5 +1,7 @@
 package com.bezkoder.springjwt.models;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,18 +10,29 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String details;
+
     private String name_room;
+
     private String price;
+
     private String file;
+    private Boolean status;
+
+    @Transient
+    private String fileURL;
+
     public Room() {
+
     }
 
-    public Room( String details, String name_room, String price,String file) {
+    public Room( String details, String name_room, String price,Boolean status,String file) {
         this.name_room = name_room;
         this.file= file;
         this.details = details;
         this.price = price;
+        this.status = status;
     }
 
     public long getId() {
@@ -61,4 +74,16 @@ public class Room {
     public void setPrice(String price) {
         this.price = price;
     }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public String getFileURL() { return fileURL; }
+
+    public void setFileURL(String fileURL) { this.fileURL = fileURL; }
 }

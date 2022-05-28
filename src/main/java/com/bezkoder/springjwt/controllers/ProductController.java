@@ -26,6 +26,7 @@ public class ProductController {
         List<Product> list =productService.list();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
     @GetMapping("/details/{id}")
     public ResponseEntity<Product> getById(@PathVariable("id") int id){
         if (!productService.existsById(id))
@@ -33,6 +34,7 @@ public class ProductController {
         Product product = productService.getOne(id).get();
         return new ResponseEntity(product, HttpStatus.OK);
     }
+
 
     @GetMapping("/detailscode/{code}")
     public ResponseEntity<Product> getByCode(@PathVariable("code") String code){
@@ -48,15 +50,23 @@ public class ProductController {
             return new ResponseEntity(new Message("entrer le code oligatoire"),HttpStatus.BAD_REQUEST);
         if (productDto.getName()==null)
             return new ResponseEntity(new Message("enter le nom obligatoire"),HttpStatus.BAD_REQUEST);
+        if (productDto.getPrice()==null)
+            return new ResponseEntity(new Message("enter le prix obligatoire"),HttpStatus.BAD_REQUEST);
         if (productService.existsByCode(productDto.getCode()))
             return new ResponseEntity(new Message("le code est existe deja"),HttpStatus.BAD_REQUEST);
 
-        Product product =new Product(productDto.getCode(), productDto.getName());
+        Product product =new Product(productDto.getCode(), productDto.getName(), productDto.getPrice());
         productService.save(product);
         return new ResponseEntity(new Message("le produit cree avec succee"),HttpStatus.OK);
+
+
+
     }
 
-    @PostMapping("/update/{id}")
+
+
+
+    @PutMapping ("/update/{id}")
     public  ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody ProductDto productDto){
 
         if (!productService.existsById(id))
@@ -68,13 +78,19 @@ public class ProductController {
             return new ResponseEntity(new Message("entrer le code oligatoire"),HttpStatus.BAD_REQUEST);
         if (productDto.getName()==null)
             return new ResponseEntity(new Message("enter le nom obligatoire"),HttpStatus.BAD_REQUEST);
+        if (productDto.getPrice()==null)
+            return new ResponseEntity(new Message("enter le prix obligatoire"),HttpStatus.BAD_REQUEST);
 
         Product product = productService.getOne(id).get();
         product.setCode(productDto.getCode());
         product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
         productService.save(product);
 
         return new ResponseEntity(new Message("  updated succfuly"),HttpStatus.OK);
+
+
+
     }
 
 
@@ -85,5 +101,7 @@ public class ProductController {
         productService.delete(id);
         return new ResponseEntity(new Message("produit supprimer avec succee"), HttpStatus.OK);
     }
+
+
 
 }

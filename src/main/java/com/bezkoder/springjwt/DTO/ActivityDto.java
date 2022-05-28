@@ -20,18 +20,16 @@ public class ActivityDto {
     private String promotion;
     private Boolean available;
 
-    private String file;
 
 
     public ActivityDto() {
     }
 
-    public ActivityDto(String name, Date activity_schedule, String promotion, Boolean available, String file) {
+    public ActivityDto(String name, Date activity_schedule, String promotion, Boolean available) {
         this.name = name;
         this.activity_schedule = activity_schedule;
         this.promotion = promotion;
         this.available = available;
-        this.file = file;
 
     }
 
@@ -59,9 +57,7 @@ public class ActivityDto {
         this.promotion = promotion;
     }
 
-    public String getFile() {return file;}
 
-    public void setFile(String file) {this.file = file;}
 
     public Boolean getAvailable() {
         return available;

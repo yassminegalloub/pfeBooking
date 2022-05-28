@@ -30,4 +30,8 @@ public class UserService {
         return userRepository.existsById(id);
     }
     public  Optional<User> getOne(Long id) { return userRepository.findById(id);}
+
+    public User updatePassword(User user1) {
+        return userRepository.save(user1);
+    }
 }

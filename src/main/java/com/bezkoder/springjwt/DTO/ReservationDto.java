@@ -1,12 +1,13 @@
 package com.bezkoder.springjwt.DTO;
 
 import com.bezkoder.springjwt.models.Activity;
+import com.bezkoder.springjwt.models.Room;
 import com.bezkoder.springjwt.models.User;
 
 import java.util.Date;
 
 public class ReservationDto {
-    private String room_number;
+    private Long id_room;
 
     private Long adult_number;
 
@@ -16,8 +17,8 @@ public class ReservationDto {
 
     private Date departure ;
 
-    private Activity activity;
-     private User user ;
+    private Long id_activity;
+     private Long id_user ;
 
 
 
@@ -28,29 +29,21 @@ public class ReservationDto {
     public ReservationDto() {
     }
 
-    public ReservationDto(String room_number, long adult_number, long enfant_number, Date arrival, Date departure, Activity activity, User user) {
-        this.room_number = room_number;
+    public ReservationDto(Long id_room ,Long adult_number, Long enfant_number, Date arrival, Date departure, Long id_activity, Long id_user) {
         this.adult_number = adult_number;
         this.enfant_number = enfant_number;
         this.arrival = arrival;
         this.departure = departure;
-        this.user= user;
+        this.id_activity = id_activity;
+        this.id_user = id_user;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public Long getId_room() {
+        return id_room;
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
-    public String getRoom_number() {
-        return room_number;
-    }
-
-    public void setRoom_number(String room_number) {
-        this.room_number = room_number;
+    public void setId_room(Long id_room) {
+        this.id_room = id_room;
     }
 
     public Long getAdult_number() {
@@ -85,11 +78,19 @@ public class ReservationDto {
         this.departure = departure;
     }
 
-    public User getUser() {
-        return user;
+    public Long getId_activity() {
+        return id_activity;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setId_activity(Long id_activity) {
+        this.id_activity = id_activity;
+    }
+
+    public Long getId_user() {
+        return id_user;
+    }
+
+    public void setId_user(Long id_user) {
+        this.id_user = id_user;
     }
 }
