@@ -73,5 +73,7 @@ public class ActivityService {
     public Stream<Activity> getAllFiles() {
         return activityRepository.findAll().stream();
     }
-
+    public Long nbrActivity(){
+        return  activityRepository.count();
+    }
 }

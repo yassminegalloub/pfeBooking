@@ -18,24 +18,22 @@ public class ReservationDto {
     private Date departure ;
 
     private Long id_activity;
+
      private Long id_user ;
 
-
-
-
-
-     //password=getOne()+
+     private boolean  is_reserved ;
 
     public ReservationDto() {
     }
 
-    public ReservationDto(Long id_room ,Long adult_number, Long enfant_number, Date arrival, Date departure, Long id_activity, Long id_user) {
+    public ReservationDto(Long adult_number, Long enfant_number, Date arrival, Date departure, Long id_activity, Long id_user, boolean is_reserved) {
         this.adult_number = adult_number;
         this.enfant_number = enfant_number;
         this.arrival = arrival;
         this.departure = departure;
         this.id_activity = id_activity;
         this.id_user = id_user;
+        this.is_reserved = is_reserved;
     }
 
     public Long getId_room() {
@@ -92,5 +90,13 @@ public class ReservationDto {
 
     public void setId_user(Long id_user) {
         this.id_user = id_user;
+    }
+
+    public boolean getIs_reserved() {
+        return is_reserved;
+    }
+
+    public void setIs_reserved(boolean is_reserved) {
+        this.is_reserved = is_reserved;
     }
 }

@@ -24,12 +24,14 @@ public class Reservation {
 
     private Long user;
 
+    private boolean is_reserved ;
+
 
 
     public Reservation() {
     }
 
-    public Reservation(Long room, Long adult_number, Long enfant_number, Date arrival, Date departure, Long activity, Long user) {
+    public Reservation(Long room, Long adult_number, Long enfant_number, Date arrival, Date departure, Long activity, Long user, boolean is_reserved) {
         this.room = room;
         this.adult_number = adult_number;
         this.enfant_number = enfant_number;
@@ -37,6 +39,7 @@ public class Reservation {
         this.departure = departure;
         this.activity = activity;
         this.user = user;
+        this.is_reserved= is_reserved ;
     }
 
     public Long getId() {
@@ -101,5 +104,13 @@ public class Reservation {
 
     public void setUser(Long user) {
         this.user = user;
+    }
+
+    public boolean getIs_reserved() {
+        return is_reserved;
+    }
+
+    public void setIs_reserved(boolean is_reserved) {
+        this.is_reserved = is_reserved;
     }
 }

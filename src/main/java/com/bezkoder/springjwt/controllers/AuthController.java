@@ -1,8 +1,10 @@
 package com.bezkoder.springjwt.controllers;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.validation.Valid;
 
+import com.bezkoder.springjwt.models.Room;
 import com.bezkoder.springjwt.repository.ActivityRepository;
 import com.bezkoder.springjwt.security.services.ActivityService;
 import com.bezkoder.springjwt.security.services.UserService;
@@ -143,13 +145,9 @@ public class AuthController {
 			strRoles.forEach(role -> {
 				switch (role) {
 
-					case "agent":
-						Role agentRole = roleRepository.findByName(ERole.ROLE_AGENT)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(agentRole);
-						break;
-					case "reception":
-						Role receptionRole = roleRepository.findByName(ERole.ROLE_RECEPTION)
+
+					case "admin":
+						Role receptionRole = roleRepository.findByName(ERole.ROLE_ADMIN)
 								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 						roles.add(receptionRole);
 						break;
@@ -193,11 +191,7 @@ public class AuthController {
 			strRoles.forEach(role -> {
 				switch (role) {
 
-					case "agent":
-						Role agentRole = roleRepository.findByName(ERole.ROLE_AGENT)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(agentRole);
-						break;
+
 					case "reception":
 						Role receptionRole = roleRepository.findByName(ERole.ROLE_RECEPTION)
 								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -215,22 +209,26 @@ public class AuthController {
 
 	@GetMapping("/allUsers")
 	public List<User> viewUsers(Model model, SignupRequest signUpRequest ){
+
 		List<User> users = service.listAll();
 		model.addAttribute("users", users);
 		signUpRequest.getRole();
 		return users ;
 	}
-	@GetMapping("/allReception")
-	public ResponseEntity<?> viewReception(Model model, SignupRequest signUpRequest ){
-		//if(User.getRoles().equals(roleRepository.findByName(ERole.ROLE_RECEPTION)) ){
+	@GetMapping("/allClient")
+	public List<User> viewClient(Model model, SignupRequest signUpRequest ){
 			List<User> users = service.listAll();
+		if(roleRepository.findByname(ERole.ROLE_CLIENT)){
 			model.addAttribute("users", users);
 			signUpRequest.getRole();
+		}
 
-		//}
-		return new ResponseEntity( HttpStatus.OK);
-
+		return users ;
 	}
+
+
+
+
     @GetMapping("/allRoles")
     public List<Role> viewRoles(Model model, SignupRequest signUpRequest ){
         List<Role> roles = service.listRoles();
@@ -252,7 +250,7 @@ public class AuthController {
 		service.delete(idUser);
 	}
 
-	@PostMapping("/editUser/{id}")
+	@PutMapping("/editUser/{id}")
 	public ResponseEntity<?> editUser(@PathVariable("id") Long id, @RequestBody SignupRequest signUpRequest){
 		User user = service.getOne(id).get();
 		user.setName(signUpRequest.getName());
@@ -267,11 +265,17 @@ public class AuthController {
 		Optional<User> user = service.getOne(id);
      if (user.isPresent()){
 		 User user1=user.get();
-		 user1.setPassword(signUpRequest.getPassword());
+		 user1.setPassword(encoder.encode(signUpRequest.getPassword()));
 		 service.updatePassword(user1);
 	 }
 
 		return new ResponseEntity(user, HttpStatus.OK);
+	}
+
+	@GetMapping("/nbrUser")
+	public long nbrUser(){
+
+		return service.nbrUser();
 	}
 
 

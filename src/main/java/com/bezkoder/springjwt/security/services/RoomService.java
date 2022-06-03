@@ -33,7 +33,17 @@ public class RoomService  {
     }
 
     public Optional<Room> getOne(Long id){
-        return roomRepository.findById(id);
+        Room room =roomRepository.findById(id).get();
+        String url;
+
+            if(room.getFile()!=null ) {
+                url = MvcUriComponentsBuilder
+                        .fromMethodName(RoomController.class, "getFile", room.getFile()).build().toString();
+
+                room.setFileURL(url);
+            }
+
+        return Optional.of(room);
     }
 
     public Room save(Room room){
@@ -54,6 +64,40 @@ public class RoomService  {
 
     public Stream<Room> getAllFiles() {
         return roomRepository.findAll().stream();
+    }
+
+    public Stream<Room> getFreeRoom(){
+
+        return roomRepository.findByStatus(false).stream();
+    }
+    public Long nbrRoomReserved(){
+        List <Room> listroomReserved=roomRepository.findAll();
+        Long nbrRoomReserved=listroomReserved.stream().filter (r->r.getStatus()==true).count();
+         return  nbrRoomReserved ;
+    }
+
+    public Long nbrRoomFree(){
+        List <Room> listrooms=roomRepository.findAll();
+
+       Long nbFreeRoom=listrooms.stream().filter (r->r.getStatus()==false).count();
+        return  nbFreeRoom ;
+
+    }
+
+
+    public List<Room> GetFreeRoom(){
+        List<Room> roomList =roomRepository.findByStatus(false);
+        String url;
+        for(Room room:roomList){
+
+            if(room.getFile()!=null ) {
+                url = MvcUriComponentsBuilder
+                        .fromMethodName(RoomController.class, "getFile", room.getFile()).build().toString();
+
+                room.setFileURL(url);
+            }
+        }
+        return roomList;
     }
 
 }

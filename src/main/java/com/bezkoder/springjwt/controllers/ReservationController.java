@@ -61,7 +61,9 @@ public class ReservationController {
     @PostMapping("/ReservationClient/{id_room}/{id_activity}/{id_user}")
     public Reservation ReservationClient(@PathVariable("id_room") Long id_room,@PathVariable("id_activity") Long id_activity,
                                                @PathVariable("id_user") Long id_user , @RequestBody ReservationDto reservationDto){
-      //  Room room= roomRepository.findById(id_room).get();
+        Room room= roomRepository.findById(id_room).get();
+        room.setStatus(true);
+        roomRepository.save(room);
       //  Activity activity=activityRepository.findById(id_activity).get();
         //User user=userRepository.findById(id_user).get();
         Reservation reservation= new Reservation();
@@ -72,8 +74,96 @@ public class ReservationController {
         reservation.setDeparture(reservationDto.getDeparture());
         reservation.setAdult_number(reservationDto.getAdult_number());
         reservation.setEnfant_number(reservationDto.getEnfant_number());
+        reservation.setIs_reserved(false);
         return reservationService.save(reservation,id_room,id_activity,id_user);
 
+    }
+    @PutMapping("/UpdateReservation/{id}")
+    public Reservation updateReservation(@PathVariable("id") Long id , @RequestBody ReservationDto reservationDto){
+        Reservation reservation= reservationService.getOne(id).get();
+        reservation.setRoom(reservationDto.getId_room());
+        reservation.setActivity(reservationDto.getId_activity());
+        reservation.setUser(reservationDto.getId_user());
+        reservation.setArrival(reservationDto.getArrival());
+        reservation.setDeparture(reservationDto.getDeparture());
+        reservation.setAdult_number(reservationDto.getAdult_number());
+        reservation.setEnfant_number(reservationDto.getEnfant_number());
+        return reservationService.saveUpdate(reservation);
+
+    }
+
+    @PutMapping("/confirmerButton/{id}")
+    public Reservation confirmerButton(@PathVariable("id") Long id){
+        //Reservation reservation = reservationRepo.findById(id).get();
+Reservation reservation= reservationService.getOne(id).get();
+        reservation.setIs_reserved(true);
+        return  reservationService.updateIsReserved(reservation);
+
+
+    }
+
+
+
+    @PostMapping("/ReservationAdmin/{id_room}/{id_activity}/{id_user}")
+    public Reservation ReservationAdmin(@PathVariable("id_room") Long id_room,@PathVariable("id_activity") Long id_activity,
+                                         @PathVariable("id_user") Long id_user , @RequestBody ReservationDto reservationDto){
+        Room room= roomRepository.findById(id_room).get();
+        room.setStatus(true);
+        roomRepository.save(room);
+
+        //  Activity activity=activityRepository.findById(id_activity).get();
+        User user=userRepository.findById(id_user).get();
+        Reservation reservation= new Reservation();
+        reservation.setRoom(id_room);
+        reservation.setActivity(id_activity);
+        reservation.setUser(id_user);
+        reservation.setArrival(reservationDto.getArrival());
+        reservation.setDeparture(reservationDto.getDeparture());
+        reservation.setAdult_number(reservationDto.getAdult_number());
+        reservation.setEnfant_number(reservationDto.getEnfant_number());
+        reservation.setIs_reserved(true);
+        return reservationService.save(reservation,id_room,id_activity,id_user);
+
+    }
+
+    @PostMapping("/ReservationAdmin2/{id_room}/{id_activity}")
+    public Reservation ReservationAdmin2(@PathVariable("id_room") Long id_room,@PathVariable("id_activity") Long id_activity,
+                                       @RequestBody ReservationDto reservationDto , SignupRequest signupRequest){
+
+
+        //  Activity activity=activityRepository.findById(id_activity).get();
+       // User user=userRepository.findById(id_user).get();
+        User user = new User();
+        user.setName(signupRequest.getName());
+        user.setUsername(signupRequest.getUsername());
+        user.setEmail(signupRequest.getEmail());
+        user.setPassword(signupRequest.getPassword());
+       //// Set<Role> roles = new HashSet<>();
+
+       // Role userRole = roleRepository.findByName(ERole.ROLE_CLIENT)
+        //        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        //roles.add(userRole);
+       // user.setRoles(roles);
+    // userRepository.findById(user.getId()).get();
+        userRepository.save(user);
+        Room room= roomRepository.findById(id_room).get();
+        room.setStatus(true);
+        roomRepository.save(room);
+        Reservation reservation= new Reservation();
+        reservation.setRoom(id_room);
+        reservation.setActivity(id_activity);
+        reservation.setUser(user.getId());
+        reservation.setArrival(reservationDto.getArrival());
+        reservation.setDeparture(reservationDto.getDeparture());
+        reservation.setAdult_number(reservationDto.getAdult_number());
+        reservation.setEnfant_number(reservationDto.getEnfant_number());
+        reservation.setIs_reserved(true);
+        return reservationService.saveRes(reservation,id_room,id_activity);
+
+    }
+    @GetMapping("/nbrReservation")
+    public long nbrReservation(){
+        return reservationService.nbrReservation() ;
     }
 
 }

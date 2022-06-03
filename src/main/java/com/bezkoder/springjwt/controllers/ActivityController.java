@@ -7,6 +7,7 @@ import com.bezkoder.springjwt.DTO.RoomDTOs;
 import com.bezkoder.springjwt.models.Activity;
 import com.bezkoder.springjwt.models.Room;
 import com.bezkoder.springjwt.models.User;
+import com.bezkoder.springjwt.payload.response.MessageResponse;
 import com.bezkoder.springjwt.security.services.ActivityService;
 import com.bezkoder.springjwt.security.services.FileImplService;
 import com.bezkoder.springjwt.security.services.FileService;
@@ -64,7 +65,7 @@ public class ActivityController {
         activityService.delete(id);
 
     }
-    @PostMapping(value ="/editActivity/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value ="/editActivity/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> editRoom(@PathVariable("id") Long id, @RequestParam("activities") String activities, @RequestParam("file") MultipartFile file) throws IOException {
         ActivityDto activityDto = new ObjectMapper().readValue(activities, ActivityDto.class);
 
@@ -76,7 +77,6 @@ public class ActivityController {
         //update donnée
         activity.setName(activityDto.getName());
         activity.setActivity_schedule(activityDto.getActivity_schedule());
-        activity.setAvailable(activityDto.getAvailable());
         activity.setPromotion(activityDto.getPromotion());
         activity.setFile(fileName);
 
@@ -85,12 +85,30 @@ public class ActivityController {
 
         return new ResponseEntity(activity, HttpStatus.OK);
     }
-    @PostMapping("/editAvailable/{id}")
+
+    @GetMapping("/detailsActivity/{id}")
+    public ResponseEntity<Activity> getRoomById(@PathVariable("id") Long id){
+        if (!activityService.existsById((long) id))
+            return new ResponseEntity(new MessageResponse("not exist"), HttpStatus.NOT_FOUND);
+        Activity activity = activityService.getOne(id).get();
+        return new ResponseEntity(activity, HttpStatus.OK);
+    }
+    @PutMapping("/editNotAvailable/{id}")
+    public Activity editNotAvailable(@PathVariable("id") Long id, @RequestBody ActivityDto activityDto){
+        Optional<Activity> activity = activityService.getOne(id);
+        Activity activity1=activity.get();
+
+        activity1.setAvailable(false);
+
+        return activityService.updateAvailable(activity1);
+    }
+
+    @PutMapping("/editAvailable/{id}")
     public Activity editAvailable(@PathVariable("id") Long id, @RequestBody ActivityDto activityDto){
         Optional<Activity> activity = activityService.getOne(id);
         Activity activity1=activity.get();
 
-        activity1.setAvailable(activityDto.getAvailable());
+        activity1.setAvailable(true);
 
         return activityService.updateAvailable(activity1);
     }
@@ -106,6 +124,10 @@ public class ActivityController {
         Resource file = fileService.load(filename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+    @GetMapping("/nbrActivity")
+    public long nbrActivity(){
+        return activityService.nbrActivity() ;
     }
 
 

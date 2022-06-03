@@ -9,6 +9,7 @@ import com.bezkoder.springjwt.models.Room;
 import com.bezkoder.springjwt.models.User;
 import com.bezkoder.springjwt.payload.request.SignupRequest;
 import com.bezkoder.springjwt.payload.response.MessageResponse;
+import com.bezkoder.springjwt.repository.RoomRepository;
 import com.bezkoder.springjwt.security.services.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/room")
@@ -35,6 +38,8 @@ public class RoomController {
     RoomFileService roomFileService;
     @Autowired
     RoomFileImplService roomFileImplService;
+    @Autowired
+    RoomRepository roomRepository ;
 
 
 
@@ -62,7 +67,7 @@ public class RoomController {
 
 
     }
-    @PostMapping(value ="/editRoom/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value ="/editRoom/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> editRoom(@PathVariable("id") Long id, @RequestParam("rooms") String rooms, @RequestParam("file") MultipartFile file) throws IOException {
         RoomDTOs roomDto = new ObjectMapper().readValue(rooms, RoomDTOs.class);
 
@@ -123,5 +128,21 @@ public class RoomController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
+   @GetMapping("/freeRoom")
+    public List<Room> getfreeRoom(){
+        return roomService.GetFreeRoom();
+   }
 
+    @GetMapping("/nbrRoomReserved")
+    public Long nbrRoomReserved(){
+
+        return roomService.nbrRoomReserved();
+
+    }
+
+    @GetMapping("/nbrRoomFree")
+    public Long nbrRoomFree(){
+        return roomService.nbrRoomFree();
+
+    }
 }

@@ -1,5 +1,7 @@
 package com.bezkoder.springjwt.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -20,6 +22,7 @@ public class Activity {
     @Size(max = 20)
     private String name ;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date activity_schedule;
 
     @Size(max = 50)

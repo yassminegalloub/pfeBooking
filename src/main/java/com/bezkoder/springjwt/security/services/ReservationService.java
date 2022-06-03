@@ -4,6 +4,7 @@ import com.bezkoder.springjwt.models.Reservation;
 import com.bezkoder.springjwt.repository.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -27,11 +28,30 @@ public class ReservationService {
        return reservationRepo.save((reservation));
 
     }
+    public Reservation saveRes(Reservation reservation, Long  id_activity, Long id_room) {
+        return reservationRepo.save((reservation));
+
+    }
+    public Reservation saveUpdate(Reservation reservation) {
+        return reservationRepo.save((reservation));
+
+    }
+
+    public Reservation updateIsReserved(Reservation reservation1) {
+        return reservationRepo.save((reservation1));
+
+    }
 
     public void delete(long id) {
         reservationRepo.deleteById(id);
     }
     public boolean existsById (Long id){return reservationRepo.existsById(id);}
+
+    public Long nbrReservation(){
+        return  reservationRepo.count();
+    }
+
+
 
     //public boolean existsByroom_number(String room_number){ return reservationRepo.existsByroom_number(room_number); }
 
